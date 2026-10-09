@@ -95,6 +95,33 @@ def hunt(grid):
                 coords.append((row + i, column - i))
             apply_plus_one(coords)
             
+def target(grid):
+    rows = len(grid)
+    columns = len(grid[0])
+
+    offsets = [
+        (-1, 0), # North
+        (1, 0), # South
+        (0, 1), # East
+        (0, -1), # West
+        (-1, -1), # Northwest
+        (-1, 1), # Northeast
+        (1, -1), # Southwest
+        (1, 1) # Southeast
+    ]
+
+    hit_bonus = 1000
+
+    for row in range(rows):
+        for column in range(columns):
+            if grid[row][column] == "H":
+                for changed_row, changed_column in offsets:
+                    neighbouring_row, neighbouring_column = row + changed_row, column + changed_column
+                    if 0 <= neighbouring_row <= rows and 0 <= neighbouring_column <= columns:
+                        val = [neighbouring_row][neighbouring_column]
+                        if isinstance(val, (int, float)) and val >= 0:
+                            grid[neighbouring_row][neighbouring_column] += hit_bonus
+
 
 def make_move(opp_grid, prev_moves):
     # Opponent's grid 0:unknown, 2:known miss, 3:known hit
@@ -102,6 +129,8 @@ def make_move(opp_grid, prev_moves):
     # Your previous moves is a list of [row, column, hit true/false] lists
     # Most recent move is at the end of the list
 
+    rows = len(opp_grid)
+    columns = len(opp_grid[0])
     usable_grid = opp_grid[:]
 
 
