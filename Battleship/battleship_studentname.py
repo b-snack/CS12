@@ -21,27 +21,22 @@ def place_ships(grid):
     for i in range(2, 7):
         grid[1][i] = 1
    
-    for i in range(0, 6):
+    for i in range(1, 6):
         grid[i][8] = 1
        
     for i in range(3, 8):
         grid[i][6] = 1
        
-    for i in range(1, 6):
-        grid[i][i+2] = 1
-   
     coordinates = [(0, 8), (1, 7), (2, 6), (3, 5), (4, 4)]
     for x, y in coordinates:
         grid[x][y] = 1
        
     coordinates_2 = [(3, 1), (4, 2), (5, 3), (6, 4), (7, 5)]
-    for x, y in coordinates:
+    for x, y in coordinates_2:
         grid[x][y] = 1
-       
-   
    
     # the grid with all ships placed is the return
-               
+
     return grid
 
 print(place_ships([]))
@@ -89,7 +84,7 @@ def hunt(grid):
             apply_plus_one(coords)
 
     for row in range(rows - WINDOW_SIZE + 1):
-        for column in range(columns - WINDOW_SIZE + 1):
+        for column in range(WINDOW_SIZE - 1, columns):
             coords = []
             for i in range(WINDOW_SIZE):
                 coords.append((row + i, column - i))
@@ -117,8 +112,8 @@ def target(grid):
             if grid[row][column] == "H":
                 for changed_row, changed_column in offsets:
                     neighbouring_row, neighbouring_column = row + changed_row, column + changed_column
-                    if 0 <= neighbouring_row <= rows and 0 <= neighbouring_column <= columns:
-                        val = [neighbouring_row][neighbouring_column]
+                    if 0 <= neighbouring_row < rows and 0 <= neighbouring_column < columns:
+                        val = grid[neighbouring_row][neighbouring_column]
                         if isinstance(val, (int, float)) and val >= 0:
                             grid[neighbouring_row][neighbouring_column] += hit_bonus
 
@@ -128,10 +123,4 @@ def make_move(opp_grid, prev_moves):
    
     # Your previous moves is a list of [row, column, hit true/false] lists
     # Most recent move is at the end of the list
-
-    rows = len(opp_grid)
-    columns = len(opp_grid[0])
-    usable_grid = opp_grid[:]
-
-
     return (row, col)

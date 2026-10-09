@@ -1,7 +1,7 @@
 import copy
 import time
-import battleship_alice
-import battleship_bob
+import battleship_student
+import battleship_test
 
 BOARD_SIZE = 10
 TOTAL_SHIPS = 5
@@ -26,6 +26,14 @@ def print_match_state(track1, name1, track2, name2, turn):
         row2 = " ".join(symbols[track2[r][c]] for c in range(BOARD_SIZE))
         print(r, row1, "|", r, row2)
 
+def count_remaining(board):
+    count = 0
+    for i in board:
+        for j in i:
+            if j == 1:
+                count += 1
+    return count
+
 def run_1v1(bot1, bot2, enter, display):
     
     # initial board setups
@@ -46,34 +54,32 @@ def run_1v1(bot1, bot2, enter, display):
     for turn in range(1, MAX_TURNS + 1):
         # Player 1 
         r, c = bot1.make_move(copy.deepcopy(track1), copy.deepcopy(moves_history1))
-        is_hit1 = (board2[r][c] == 1)
+        is_hit1 = (board2[r][c] == 1 or board2[r][c]== 3)
         moves_history1.append([r, c, is_hit1])
         
         if is_hit1 == True:
             track1[r][c] = 3
             board2[r][c] = 3
-            ships2_left -= 1
         else:
             track1[r][c] = 2
             
-        if ships2_left == 0:
+        if count_remaining(board2) == 0:
             print_match_state(track1, bot1.BOT_NAME, track2, bot2.BOT_NAME, turn)
             print("WINNER:", bot1.BOT_NAME)
             return
 
         # Player 2
         r, c = bot2.make_move(copy.deepcopy(track2), copy.deepcopy(moves_history2))
-        is_hit2 = (board1[r][c] == 1)
+        is_hit2 = (board1[r][c] == 1 or board1[r][c]== 3)
         moves_history2.append([r, c, is_hit2])
         
         if is_hit2:
             track2[r][c] = 3
             board1[r][c] = 3
-            ships1_left -= 1
         else:
             track2[r][c] = 2
             
-        if ships1_left == 0:
+        if count_remaining(board1) == 0:
             print_match_state(track1, bot1.BOT_NAME, track2, bot2.BOT_NAME, turn)
             print("WINNER:", bot2.BOT_NAME)
             return
@@ -85,4 +91,4 @@ def run_1v1(bot1, bot2, enter, display):
     print("MATCH DRAWN")
 
 if __name__ == "__main__":
-    run_1v1(battleship_alice, battleship_bob, enter = False, display = False)
+    run_1v1(battleship_student, battleship_test, enter = False, display = False)
