@@ -1,3 +1,29 @@
+"""
+Battleship Game
+ICS4U 
+Sebastian Wu
+This is a virtual version of battleship, written in python to show understanding of 2D Lists. 
+
+Version 1: Initial brainstorming + Strategy Research; placed all ships and found out about probability density methods
+Version 2: After place_ships function was completed, I settled on using th eprobability density in order to determine which squares to
+           "hunt". This meant that I'd go through windows of five in all cardinal directions and add 1 for squares that could potentially hold
+           an opponent's battleship. This meant learning a bit more about for loops like how to iterate through set windows in 2D lists. 
+
+Version 3: Worked on "hunt" function, which is the probability mapping. This adds 1 for each slice of 5 and iterates through, adding 1 to each potential 
+           location, and ignores / doesn't add to those with adjacent squares that are misses (currently -1; will have to change later)
+           Implementing the diagonals were a little tough, but I figured it out after looking it up online. I also had to find a good way to verify if
+           there was a number in the given square. I found the solution to be the function "isinstance(val, form)"
+
+
+Version 4: Worked on "target function". If there has been a hit square, this function takes the adjacent squares and adds a high number 
+           like 1000 so that it overshadows all other squares, placing immediate priority on them. However, it still ignores values
+           that are -1, or "H" as to not run into repeated errors. Due to there being 8 directions that the next hit could potential be in, 
+           I realized that this code could take many more tries to hit the ship than a traditional grid where one may place ships vertically
+           or horizontally. Though, this is also potentially overriden by the number of squares the ship cover (25), which is significantly
+           more board space occupied. This function took some new logic and was slightly more difficult to implement. 
+
+"""
+
 import random
 
 BOT_NAME = "YOURBOTNAME"
@@ -53,7 +79,7 @@ def hunt(grid):
 
         for row, column in coords:
             val = grid[row][column]
-            if isinstance(val, (int, float)): # checks if val is in the form of (int, float)
+            if isinstance(val, (int, float)): # checks if val is in the form of (int or float)
                 grid[row][column] += 1
 
     # --------------- HORIZONTAL --------------------
