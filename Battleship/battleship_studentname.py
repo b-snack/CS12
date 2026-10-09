@@ -61,6 +61,8 @@ def hunt(grid):
             if isinstance(val, (int, float)): # checks if val is in the form of (int, float)
                 grid[row][column] += 1
 
+    # --------------- HORIZONTAL --------------------
+
     for row in range(len(grid)):
         for start in range(len(grid[row]) - WINDOW_SIZE + 1):
             coords = []
@@ -68,25 +70,31 @@ def hunt(grid):
                 coords.append((row, start + i))
             apply_plus_one(coords)
 
-    for row in range(len(rows)):
-        for start in range(len(columns) - WINDOW_SIZE + 1):
+    # ----------------- VERTICAL ------------------
+
+    for row in range(rows - WINDOW_SIZE + 1):
+        for column in range(columns):
             coords = []
             for i in range(WINDOW_SIZE):
+                coords.append((row + i, column))
+            apply_plus_one(coords)
 
-    row_limit = len(grid) - 5 + 1
-    column_limit = len(grid[0]) - 5 + 1
+    # ---------------- DIAGONALS ------------------
 
-    for row_start in range(row_limit):
-        for column_start in range(column_limit):
-            for step in range(5):
-                grid[row_start + step][column_start + step] += 1
+    for row in range(rows - WINDOW_SIZE + 1):
+        for column in range(columns - WINDOW_SIZE + 1):
+            coords = []
+            for i in range(WINDOW_SIZE):
+                coords.append((row + i, column + i))
+            apply_plus_one(coords)
 
-
-
-    except:
-
-
-
+    for row in range(rows - WINDOW_SIZE + 1):
+        for column in range(columns - WINDOW_SIZE + 1):
+            coords = []
+            for i in range(WINDOW_SIZE):
+                coords.append((row + i, column - i))
+            apply_plus_one(coords)
+            
 
 def make_move(opp_grid, prev_moves):
     # Opponent's grid 0:unknown, 2:known miss, 3:known hit
