@@ -22,6 +22,7 @@ Version 4: Worked on "target function". If there has been a hit square, this fun
            or horizontally. Though, this is also potentially overriden by the number of squares the ship cover (25), which is significantly
            more board space occupied. This function took some new logic and was slightly more difficult to implement. 
 
+Version 5: 
 """
 
 import random
@@ -74,7 +75,7 @@ def hunt(grid):
 
     def apply_plus_one(coords):
         for row, column in coords:
-            if grid[row][column] == -1:
+            if grid[row][column] == -1 or grid[row][column] == "H":
                 return
 
         for row, column in coords:
@@ -149,4 +150,46 @@ def make_move(opp_grid, prev_moves):
    
     # Your previous moves is a list of [row, column, hit true/false] lists
     # Most recent move is at the end of the list
-    return (row, col)
+
+    rows = len(opp_grid)
+    columns = len(opp_grid[0])
+    usable_grid = []
+
+    has_active_hit = False
+
+
+    for row in opp_grid:
+        new_row = row[:]
+        usable_grid.append(new_row)
+
+    for row in range(rows):
+        for column in range(columns):
+            cell_value = usable_grid[row][column]
+            if cell_value == 3:
+                usable_grid[row][column] = "H"
+                has_active_hit = True
+            elif cell_value == 2:
+                usable_grid[row][column] = -1
+            else:
+                usable_grid[row][column] = 0
+
+
+    hunt(usable_grid)
+
+    if has_active_hit:
+        target(usable_grid)
+
+    best_score = -1
+    best_move = None
+
+    for row in range(rows):
+        for column in range(columns):
+            if opp_grid[row][column] == 0:
+                if best_move is None:
+                    best_move = (row, column)
+                score = usable_grid[row][column]
+                if isinstance(score, (int, float)) and score >= best_score:
+                    best_score = score
+                    best_move = row, column
+
+    return best_move
