@@ -27,7 +27,7 @@ Version 5:
 
 import random
 
-BOT_NAME = "YOURBOTNAME"
+BOT_NAME = "Boom"
 
 GRID_SIZE = 10
 TOTAL_SHIPS = 5

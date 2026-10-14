@@ -1,7 +1,7 @@
 import copy
 import time
-import battleship_student
-import battleship_test
+import battleship_studentname
+import gemini_bot
 
 BOARD_SIZE = 10
 TOTAL_SHIPS = 5
@@ -91,4 +91,4 @@ def run_1v1(bot1, bot2, enter, display):
     print("MATCH DRAWN")
 
 if __name__ == "__main__":
-    run_1v1(battleship_student, battleship_test, enter = False, display = False)
+    run_1v1(battleship_studentname, gemini_bot, enter = False, display = False)
