@@ -38,11 +38,14 @@ WINDOW_SIZE = 5
 def place_ships(grid):
     """"""
     # input grid is all zeroes
-    for i in range(10):
-        current_row = []
-        for _ in range(10):
-            current_row.append(0)
-        grid.append(current_row)
+    if not grid:
+        for i in range(10):
+            grid.append([0] * 10)
+
+    else:
+        for row in range(10):
+            for column in range(10):
+                grid[row][column] = 0
    
     # place 5 ships of length 5, as 1s by directly modifying grid
     for i in range(2, 7):
