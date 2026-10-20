@@ -72,3 +72,101 @@ def minesweeper(grid, row, column):
     return total
 
 print(minesweeper([[0, 0, 0, 1], [0, 1, 0, 0], [0, 1, 1, 1], [1, 0, 0, 0]], 3, 1))
+
+def n_by_n(x, y):
+  grid = []
+  sublist = []
+
+  for i in range(y):
+    if i % 2 == 0:
+      for _ in range(x):
+        if _ % 2 == 0:
+          sublist.append(0)
+        else:
+          sublist.append(1)
+    elif i % 2 == 1:
+      for _ in range(x):
+        if _ % 2 == 0:
+          sublist.append(1)
+        else:
+          sublist.append(0)
+    grid.append(sublist[:])
+    sublist = []
+
+  return grid
+
+def symmetrical_square_matrix(grid):
+  for row in range(len(grid)):
+    for column in range(len(grid[0])):
+      if grid[row][column] != grid[column][row]:
+        return False
+
+  return True
+
+def magical_square(grid):
+  sums = []
+  for row in range(len(grid)):
+    total = 0
+    for item in range(len(grid[0])):
+      total += grid[row][item]
+    sums.append(total)
+
+  for column in range(len(grid[0])):
+    total = 0
+    for item in range(len(grid)):
+      total += grid[item][column]
+    sums.append(total)
+
+  diag_total = 0
+  for diagonal in range(len(grid)):
+    diag_total += grid[diagonal][diagonal]
+  sums.append(diag_total)
+
+  inv_diag_total = 0
+  for diagonal in range(len(grid)):
+      inv_diag_total += grid[diagonal][len(grid) - 1 - diagonal]
+  sums.append(inv_diag_total)
+
+  magical = True
+  for i in range(len(sums)):
+    if i == len(sums) - 1:
+      if sums[i] != sums[0]:
+        magical = False
+    elif sums[i] != sums[i+1]:
+        magical = False
+
+  return magical
+
+def rotate_matrix(grid):
+  rotated = []
+  columns = len(grid[0])
+  rows = len(grid)
+
+  for column in range(columns):
+    sublist = []
+    for row in range(rows):
+      sublist.append(grid[row][column])
+    rotated.append(sublist)
+
+  return rotated
+
+
+grid_1_test = [
+  [1, 2, 3, 4], 
+  [5, 6, 7, 8],
+  [9, 10, 11, 12]
+]
+
+print(rotate_matrix(grid_1_test))
+
+
+a = [[1, 2, 3], [4, 5, 6]]
+b = [[2, 3, 1], [6, 5, 7]]
+
+def trying(a, b):
+  c = a + b
+  a = [[1, 2, 6], [1, 2, 3]]
+
+  return c
+
+print(trying(a, b))
