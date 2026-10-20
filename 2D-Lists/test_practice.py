@@ -159,14 +159,36 @@ grid_1_test = [
 
 print(rotate_matrix(grid_1_test))
 
+def remove(m, p, q):
+  new_matrix = []
+  rows = len(m)
+  columns = len(m[0])
+  for row in range(rows):
+    sublist = []
+    if row != p:
+      for col in range(columns):
+        if col != q:
+          sublist.append(m[row][col])
+      new_matrix.append(sublist)
 
-a = [[1, 2, 3], [4, 5, 6]]
-b = [[2, 3, 1], [6, 5, 7]]
+  return new_matrix
 
-def trying(a, b):
-  c = a + b
-  a = [[1, 2, 6], [1, 2, 3]]
 
-  return c
+def f(m):
+  if len(m) == 1:
+    return m[0][0]
 
-print(trying(a, b))
+  else:
+    total = 0
+    for q in range(len(m[0])):
+      total += m[0][q] * f(remove(m, 0, q))
+
+    return total
+
+m = [
+  [3, 8, 2],
+  [5, 4, 7],
+  [1, 6, 9]]
+
+print(remove(m, 1, 2))
+print(f(m))
