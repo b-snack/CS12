@@ -70,9 +70,6 @@ def place_ships(grid):
 
     return grid
 
-print(place_ships([]))
-
-
 def hunt(grid):
     rows = len(grid)
     columns = len(grid[0])
@@ -197,6 +194,7 @@ def calculate_probability(opp_grid):
                     state = opp_grid[r][c]
                     if state == 2:
                         has_miss = True
+                        break
 
                     elif state == 3:
                         hits += 1
@@ -234,9 +232,6 @@ def make_move(opp_grid, prev_moves):
 
     best_score = -1
     best_coords = []
-
-    best_score = -1
-    best_move = None
 
     for row in range(rows):
         for column in range(columns):
