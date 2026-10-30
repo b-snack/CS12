@@ -22,7 +22,8 @@ Version 4: Worked on "target function". If there has been a hit square, this fun
            or horizontally. Though, this is also potentially overriden by the number of squares the ship cover (25), which is significantly
            more board space occupied. This function took some new logic and was slightly more difficult to implement. 
 
-Version 5: 
+Version 5: Make moves function created, combining the hunt and target functions. However, because of inefficient strategy (where it adds 1000 to all 8 directions)
+           instead of going in one direction once finding a hit, it makes the code run longer than it's supposed to, leading to games lasting around roughly 75 moves. 
 """
 
 import random
@@ -147,6 +148,78 @@ def target(grid):
                         if isinstance(val, (int, float)) and val >= 0:
                             grid[neighbouring_row][neighbouring_column] += hit_bonus
 
+def calculate_probability(opp_grid):
+    rows = len(opp_grid)
+    columns = len(opp_grid[0])
+
+    density = []
+    for row in range(rows):
+        row_sublist = []
+        for column in range(columns):
+            row_sublist.append(0)
+        density.append(row_sublist)
+
+    directions = [
+        (1, 0), # South
+        (0, 1), # East
+        (1, -1), # Southwest
+        (1, 1) # Southeast
+    ]
+
+    for row in range(rows):
+        for column in range(columns):
+            for d_row, d_column in directions:
+
+                coords = []
+                out_of_bounds = False
+
+                for i in range(WINDOW_SIZE):
+                    current_row = row + (i * d_row)
+                    current_column = column + (i * d_column)
+
+                    if current_row < 0 or current_row >= rows:
+                        out_of_bounds = True
+                        break
+
+                    if current_column < 0 or current_column >= columns:
+                        out_of_bounds = True
+                        break
+
+                    coords.append((current_row, current_column))
+
+                if out_of_bounds: 
+                    continue
+
+                has_miss = False
+                hits = 0
+
+                for r, c in coords:
+                    state = opp_grid[r][c]
+                    if state == 2:
+                        has_miss = True
+
+                    elif state == 3:
+                        hits += 1
+
+                if has_miss:
+                    continue
+
+                if hits == 0:
+                    weight = 1
+                elif hits == 1:
+                    weight += 100
+                elif hits == 2:
+                    weight += 1000
+                elif hits == 3:
+                    weight += 10000
+                else:
+                    weight = 100000
+
+                for r, c in coords:
+                    if opp_grid[r][c] == 0:
+                        density[r][c] += weight
+
+    return density
 
 def make_move(opp_grid, prev_moves):
     # Opponent's grid 0:unknown, 2:known miss, 3:known hit
@@ -156,31 +229,11 @@ def make_move(opp_grid, prev_moves):
 
     rows = len(opp_grid)
     columns = len(opp_grid[0])
-    usable_grid = []
 
-    has_active_hit = False
+    density = calculate_probability(opp_grid)
 
-
-    for row in opp_grid:
-        new_row = row[:]
-        usable_grid.append(new_row)
-
-    for row in range(rows):
-        for column in range(columns):
-            cell_value = usable_grid[row][column]
-            if cell_value == 3:
-                usable_grid[row][column] = "H"
-                has_active_hit = True
-            elif cell_value == 2:
-                usable_grid[row][column] = -1
-            else:
-                usable_grid[row][column] = 0
-
-
-    hunt(usable_grid)
-
-    if has_active_hit:
-        target(usable_grid)
+    best_score = -1
+    best_coords = []
 
     best_score = -1
     best_move = None
@@ -188,11 +241,14 @@ def make_move(opp_grid, prev_moves):
     for row in range(rows):
         for column in range(columns):
             if opp_grid[row][column] == 0:
-                if best_move is None:
-                    best_move = (row, column)
-                score = usable_grid[row][column]
-                if isinstance(score, (int, float)) and score >= best_score:
+                score = density[row][column]
+                if score > best_score:
                     best_score = score
-                    best_move = row, column
+                    best_coords = [(row, column)]
+                elif score == best_score:
+                    best_coords.append((row, column))
 
-    return best_move
+    if len(best_coords) > 0:
+        return random.choice(best_coords)
+
+    return (0, 0)
