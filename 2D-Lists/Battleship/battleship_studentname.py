@@ -3,27 +3,6 @@ Battleship Game
 ICS4U 
 Sebastian Wu
 This is a virtual version of battleship, written in python to show understanding of 2D Lists. 
-
-Version 1: Initial brainstorming + Strategy Research; placed all ships and found out about probability density methods
-Version 2: After place_ships function was completed, I settled on using th eprobability density in order to determine which squares to
-           "hunt". This meant that I'd go through windows of five in all cardinal directions and add 1 for squares that could potentially hold
-           an opponent's battleship. This meant learning a bit more about for loops like how to iterate through set windows in 2D lists. 
-
-Version 3: Worked on "hunt" function, which is the probability mapping. This adds 1 for each slice of 5 and iterates through, adding 1 to each potential 
-           location, and ignores / doesn't add to those with adjacent squares that are misses (currently -1; will have to change later)
-           Implementing the diagonals were a little tough, but I figured it out after looking it up online. I also had to find a good way to verify if
-           there was a number in the given square. I found the solution to be the function "isinstance(val, form)"
-
-
-Version 4: Worked on "target function". If there has been a hit square, this function takes the adjacent squares and adds a high number 
-           like 1000 so that it overshadows all other squares, placing immediate priority on them. However, it still ignores values
-           that are -1, or "H" as to not run into repeated errors. Due to there being 8 directions that the next hit could potential be in, 
-           I realized that this code could take many more tries to hit the ship than a traditional grid where one may place ships vertically
-           or horizontally. Though, this is also potentially overriden by the number of squares the ship cover (25), which is significantly
-           more board space occupied. This function took some new logic and was slightly more difficult to implement. 
-
-Version 5: Make moves function created, combining the hunt and target functions. However, because of inefficient strategy (where it adds 1000 to all 8 directions)
-           instead of going in one direction once finding a hit, it makes the code run longer than it's supposed to, leading to games lasting around roughly 75 moves. 
 """
 
 import random
@@ -69,81 +48,6 @@ def place_ships(grid):
     # the grid with all ships placed is the return
 
     return grid
-
-def hunt(grid):
-    rows = len(grid)
-    columns = len(grid[0])
-
-    def apply_plus_one(coords):
-        for row, column in coords:
-            if grid[row][column] == -1 or grid[row][column] == "H":
-                return
-
-        for row, column in coords:
-            val = grid[row][column]
-            if isinstance(val, (int, float)): # checks if val is in the form of (int or float)
-                grid[row][column] += 1
-
-    # --------------- HORIZONTAL --------------------
-
-    for row in range(len(grid)):
-        for start in range(len(grid[row]) - WINDOW_SIZE + 1):
-            coords = []
-            for i in range(WINDOW_SIZE):
-                coords.append((row, start + i))
-            apply_plus_one(coords)
-
-    # ----------------- VERTICAL ------------------
-
-    for row in range(rows - WINDOW_SIZE + 1):
-        for column in range(columns):
-            coords = []
-            for i in range(WINDOW_SIZE):
-                coords.append((row + i, column))
-            apply_plus_one(coords)
-
-    # ---------------- DIAGONALS ------------------
-
-    for row in range(rows - WINDOW_SIZE + 1):
-        for column in range(columns - WINDOW_SIZE + 1):
-            coords = []
-            for i in range(WINDOW_SIZE):
-                coords.append((row + i, column + i))
-            apply_plus_one(coords)
-
-    for row in range(rows - WINDOW_SIZE + 1):
-        for column in range(WINDOW_SIZE - 1, columns):
-            coords = []
-            for i in range(WINDOW_SIZE):
-                coords.append((row + i, column - i))
-            apply_plus_one(coords)
-            
-def target(grid):
-    rows = len(grid)
-    columns = len(grid[0])
-
-    offsets = [
-        (-1, 0), # North
-        (1, 0), # South
-        (0, 1), # East
-        (0, -1), # West
-        (-1, -1), # Northwest
-        (-1, 1), # Northeast
-        (1, -1), # Southwest
-        (1, 1) # Southeast
-    ]
-
-    hit_bonus = 1000
-
-    for row in range(rows):
-        for column in range(columns):
-            if grid[row][column] == "H":
-                for changed_row, changed_column in offsets:
-                    neighbouring_row, neighbouring_column = row + changed_row, column + changed_column
-                    if 0 <= neighbouring_row < rows and 0 <= neighbouring_column < columns:
-                        val = grid[neighbouring_row][neighbouring_column]
-                        if isinstance(val, (int, float)) and val >= 0:
-                            grid[neighbouring_row][neighbouring_column] += hit_bonus
 
 def calculate_probability(opp_grid):
     rows = len(opp_grid)
