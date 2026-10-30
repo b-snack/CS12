@@ -207,11 +207,11 @@ def calculate_probability(opp_grid):
                 if hits == 0:
                     weight = 1
                 elif hits == 1:
-                    weight += 100
+                    weight = 100
                 elif hits == 2:
-                    weight += 1000
+                    weight = 1000
                 elif hits == 3:
-                    weight += 10000
+                    weight = 10000
                 else:
                     weight = 100000
 
