@@ -77,17 +77,17 @@ def run_question_1(min_n, max_n, points, trials):
             l_python = l[:]
 
             start = time.perf_counter()
-            trial = insertion_sort(l_ins)
+            _ = insertion_sort(l_ins)
             end = time.perf_counter()
             ins_time += (end - start)
 
             start = time.perf_counter()
-            trial = merge_sort(l_merge)
+            _ = merge_sort(l_merge)
             end = time.perf_counter()
             merge_time += (end - start)
 
             start = time.perf_counter()
-            trial = sorted(l_python)
+            _ = sorted(l_python)
             end = time.perf_counter()
             python_time += (end - start)
 
@@ -97,7 +97,7 @@ def run_question_1(min_n, max_n, points, trials):
     
     plt.plot(lengths, insertion_times, label = "Insertion Sort", color = "red")
     plt.plot(lengths, merge_times, label = "Merge Sort", color = "blue")
-    plt.plot(lengths, python_times, label = "Python Sort", color = "green", line_style = "--")
+    plt.plot(lengths, python_times, label = "Python Sort", color = "green", linestyle = "--")
 
     plt.xlabel("Elements Sorted")
     plt.ylabel("Time Taken")
