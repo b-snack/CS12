@@ -1,6 +1,8 @@
 import time
 import random
 import matplotlib.pyplot as plt
+import gc
+from statistics import median
 
 def insertion_sort(arr):
     result = arr[:]
@@ -65,35 +67,41 @@ def run_question_1(min_n, max_n, points, trials):
     merge_times = []
     python_times = []
 
-    for i in lengths:
-        ins_time = 0.0
-        merge_time = 0.0
-        python_time = 0.0
+    gc.disable()
+    try:
+        for i in lengths:
+            ins_time = []
+            merge_time = []
+            python_time = []
 
-        for trial in range(trials):
-            l = random_list(i)
-            l_merge = l[:]
-            l_ins = l[:]
-            l_python = l[:]
+            for trial in range(trials):
+                l = random_list(i)
+                l_merge = l[:]
+                l_ins = l[:]
+                l_python = l[:]
 
-            start = time.perf_counter()
-            _ = insertion_sort(l_ins)
-            end = time.perf_counter()
-            ins_time += (end - start)
+                start = time.perf_counter()
+                _ = insertion_sort(l_ins)
+                end = time.perf_counter()
+                ins_time.append(end - start)
 
-            start = time.perf_counter()
-            _ = merge_sort(l_merge)
-            end = time.perf_counter()
-            merge_time += (end - start)
+                start = time.perf_counter()
+                _ = merge_sort(l_merge)
+                end = time.perf_counter()
+                merge_time.append(end - start)
 
-            start = time.perf_counter()
-            _ = sorted(l_python)
-            end = time.perf_counter()
-            python_time += (end - start)
+                start = time.perf_counter()
+                _ = sorted(l_python)
+                end = time.perf_counter()
+                python_time.append(end - start)
 
-        insertion_times.append(ins_time / trials)
-        merge_times.append(merge_time / trials)
-        python_times.append(python_time / trials)
+            insertion_times.append(median(ins_time))
+            merge_times.append(median(merge_time))
+            python_times.append(median(python_time))
+
+    finally:
+        gc.enable()
+
     
     plt.plot(lengths, insertion_times, label = "Insertion Sort", color = "red")
     plt.plot(lengths, merge_times, label = "Merge Sort", color = "blue")
@@ -104,5 +112,6 @@ def run_question_1(min_n, max_n, points, trials):
     plt.title("Time Taken for Elements Sorted in Different Lists")
     plt.legend()
     plt.show()
+    
+run_question_1(1, 100, 100, 2500)
 
-run_question_1(1, 200, 100, 50)
