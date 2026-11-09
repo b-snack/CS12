@@ -57,61 +57,52 @@ def disorder_list(n, disorder):
         answer[a1], answer[a2] = answer[a2], answer[a1]
     return answer
 
-def run_question_1(trials):
-  merge_time = 0
-  insertion_time = 0
-  insertion_times = []
-  merge_times = []
-  for i in range(1, trials):
-    l = random_list(i)
+def run_question_1(min_n, max_n, points, trials):
+    step = max((1, (max_n - min_n) // (points - 1)))
+    lengths = list(range(min_n, max_n + 1, step))
+
+    insertion_times = []
+    merge_times = []
+    python_times = []
+
+    for i in lengths:
+        ins_time = 0.0
+        merge_time = 0.0
+        python_time = 0.0
+
+        for trial in range(trials):
+            l = random_list(i)
+            l_merge = l[:]
+            l_ins = l[:]
+            l_python = l[:]
+
+            start = time.perf_counter()
+            trial = insertion_sort(l_ins)
+            end = time.perf_counter()
+            ins_time += (end - start)
+
+            start = time.perf_counter()
+            trial = merge_sort(l_merge)
+            end = time.perf_counter()
+            merge_time += (end - start)
+
+            start = time.perf_counter()
+            trial = sorted(l_python)
+            end = time.perf_counter()
+            python_time += (end - start)
+
+        insertion_times.append(ins_time / trials)
+        merge_times.append(merge_time / trials)
+        python_times.append(python_time / trials)
     
+    plt.plot(lengths, insertion_times, label = "Insertion Sort", color = "red")
+    plt.plot(lengths, merge_times, label = "Merge Sort", color = "blue")
+    plt.plot(lengths, python_times, label = "Python Sort", color = "green", line_style = "--")
 
-    start = time.time()
-    insertion_arr = insertion_sort(insertion_arr)
-    end = time.time()
-    insertion_time += (end - start)
+    plt.xlabel("Elements Sorted")
+    plt.ylabel("Time Taken")
+    plt.title("Time Taken for Elements Sorted in Different Lists")
+    plt.legend()
+    plt.show()
 
-    start = time.time()
-    merging_arr = merge_sort(merging_arr)
-    end = time.time()
-    merge_time += (end - start)
-
-    insertion_times.append((i, insertion_time))
-    merge_times.append((i, merge_time))
-
-
-
-
-# Example code for trials
-trials = 100
-merge_time = 0
-insertion_time = 0
-for i in range(trials):
-    l = random_list(1000)
-    l1 = l[:]
-    l2 = l[:] # try on the same list
-    
-    start = time.time()
-    l1 = merge_sort(l1)
-    end = time.time()
-    merge_time+=(end-start)
-    
-    start = time.time()
-    l2 = insertion_sort(l2)
-    end = time.time()
-    insertion_time+=(end-start)
-    
-print(merge_time)
-print(insertion_time)
-
-# Example code for graphing lists
-l1 = [0,1,2,3,4,5,6,7]
-l2 = [0,1,4,9,16,25,36,49]
-l3 = [0,6,12,18,24,30,36,42]
-plt.plot(l1, l2, '-')
-plt.plot(l1, l3, '-')
-plt.xlabel("Elements Sorted")
-plt.ylabel("Time Taken")
-plt.title("title")
-plt.legend(["one","two"])
-plt.show()
+run_question_1(1, 200, 100, 50)
